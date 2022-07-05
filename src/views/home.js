@@ -1,9 +1,21 @@
 import React from 'react'
 
+import axios from 'axios' 
+
 class Home extends React.Component{
 
     state = {
-        estudantes: 0
+        quantidaDeEstudantes: 0
+    }
+
+    componentDidMount(){
+        axios.get('http://0.0.0.0:8084/users')
+            .then(response => {
+                this.setState({ quantidaDeEstudantes: response.data.length })
+                
+            }).catch(error => {
+                console.error(error.response)
+            })
     }
 
 
@@ -13,7 +25,7 @@ class Home extends React.Component{
                 <div className="jumbotron">
                     <h1 className="display-3">Bem vindo!</h1>
                     <p className="lead">Esse é seu sistema de agendamento.</p>
-                    <p className="lead">Atualmente temos {this.state.estudantes} estudantes na casa.</p>
+                    <p className="lead">Atualmente temos {this.state.quantidaDeEstudantes} estudantes na casa.</p>
                     <hr className="my-4" />
                     <p>E essa é sua área administrativa, utilize um dos menus ou botões abaixo para navegar pelo sistema.</p>
                     <p className="lead">

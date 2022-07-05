@@ -4,8 +4,6 @@ import FormGroup from '../components/formgroup';
 
 import { withRouter } from 'react-router-dom'
 
-import axios from 'axios'
-
 class CadastroUsuario extends React.Component {
 
     state = {
@@ -93,7 +91,6 @@ class CadastroUsuario extends React.Component {
                                     </select>
                                 </FormGroup>
                       
-
                                 <FormGroup label='Dia da Faxina: *' htmlFor='inputFaxina'>
                                     <select  className="form-control" id="inputFaxina" name='faxina' onChange={e => this.setState({ calendarioLimpeza: e.target.value })}>
                                         <option value="Domingo">Domingo</option>
@@ -118,22 +115,3 @@ class CadastroUsuario extends React.Component {
 }
 
 export default withRouter(CadastroUsuario)
-
-
-          {/* <FormGroup label='Dia de Cozinhar: *' htmlFor='inputCozinha'>
-                                    <input type="text"
-                                        id="inputCozinha"
-                                        name='cozinha'
-                                        className="form-control"
-                                        placeholder="Segunda, Terça, Quarta..."
-                                        onChange={e => this.setState({ calendarioCozinha: e.target.value })}/>
-                                </FormGroup>
-
-                                <FormGroup label='Dia da Faxina: *' htmlFor='inputFaxina'>
-                                    <input type="text"
-                                        id="inputFaxina"
-                                        name='faxina'
-                                        className="form-control"
-                                        placeholder="Escolha seu dia de faxina.."
-                                        onChange={e => this.setState({ calendarioLimpeza: e.target.value })}/>
-                                </FormGroup> */}
