@@ -4,6 +4,8 @@ import FormGroup from '../components/formgroup';
 
 import { withRouter } from 'react-router-dom'
 
+import UsuarioService from '../app/service/usuarioservice';
+
 class CadastroUsuario extends React.Component {
 
     state = {
@@ -16,8 +18,26 @@ class CadastroUsuario extends React.Component {
         calendarioLimpeza: ''
     }
 
+    constructor(){
+        super()
+        this.service = new UsuarioService()
+    }
+
     cadastrar = () => {
-        console.log(this.state)
+        const usuario = {
+            name: this.state.nome,
+            email: this.state.email,
+            password: this.state.senha
+        }
+
+        this.service.salvar(usuario)
+            .then(response => {
+                console.log("Usuário cadastrado com sucesso.")
+                console.log(response.status)
+                this.props.history.push('/login')
+            }).catch(error => {
+                console.log(error.response.data)
+            })
     }
 
     cancelar = () => {
