@@ -1,6 +1,6 @@
 import React from 'react'
 
-import axios from 'axios' 
+import UsuarioService from '../app/service/usuarioservice'
 
 class Home extends React.Component{
 
@@ -8,16 +8,19 @@ class Home extends React.Component{
         quantidaDeEstudantes: 0
     }
 
+    constructor(){
+        super()
+        this.service = new UsuarioService()
+    }
+
     componentDidMount(){
-        axios.get('http://0.0.0.0:8084/users')
+        this.service.buscarQuantidadeDeUsuarios()
             .then(response => {
                 this.setState({ quantidaDeEstudantes: response.data.length })
-                
             }).catch(error => {
                 console.error(error.response)
             })
     }
-
 
     render(){
         return (
