@@ -56,11 +56,19 @@ class ConsultaTarefa extends React.Component {
         this.service.salvar(tarefa)
     }
 
+    editar = (id) => {
+        console.log('editanto tarefa'+ id)
+    }
+
+    deletar = (id) => {
+        console.log('excluindo tarefa'+ id)
+    }
+
     render() {
 
         const lista = this.service.buscarTiposDeTarefas()
-        const listaEmails = this.usuarioService.buscarEmailsEstudantes()
-        console.log("emails: " + this.state.emailsUsuarios)
+        // const listaEmails = this.usuarioService.buscarEmailsEstudantes()
+        // console.log("emails: " + this.state.emailsUsuarios)
         
         let listaDeEmail = [{ label: 'Selecione...', value: '' }]
             
@@ -109,7 +117,10 @@ class ConsultaTarefa extends React.Component {
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="bs-component">
-                                <TabelaTarefa tarefas={ this.state.tarefas }/>
+                                <TabelaTarefa
+                                    tarefas={this.state.tarefas}
+                                    deletarAction={this.deletar}
+                                    editarAction={this.editar} />
                             </div>
                         </div>
                     </div>

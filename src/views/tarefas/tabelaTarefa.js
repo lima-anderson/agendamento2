@@ -10,7 +10,19 @@ export default props => {
             <tr key={tarefa.id}>
                 <td>{ tarefa.tipo }</td>
                 <td>{moment(tarefa.data).format('MM/DD/YYYY HH:mm')}</td>
-                <td>{ tarefa.usuario.name }</td>
+                <td>{tarefa.usuario.name}</td>
+                <td>
+                    <button type="button"
+                            className="btn btn-primary" 
+                            onClick={e => props.editarAction(tarefa.id)}>
+                            Editar
+                    </button>
+                    <button type="button"
+                            className="btn btn-danger"
+                            onClick={e => props.deletarAction(tarefa.id)}>
+                            Deletar
+                    </button>
+                </td>
             </tr>
         )
     })
