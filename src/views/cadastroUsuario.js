@@ -6,6 +6,11 @@ import { withRouter } from 'react-router-dom'
 
 import UsuarioService from '../app/service/usuarioservice';
 
+import { mensagemSucesso, mensagemErro } from '../components/toastr'
+import SelectMenu from '../components/selectMenu'
+
+import TabelaUsuario from './tabelaUsuario'
+
 class CadastroUsuario extends React.Component {
 
     state = {
@@ -15,12 +20,24 @@ class CadastroUsuario extends React.Component {
         senhaRepeticao: '',
         curso: '',
         calendarioCozinha: '',
-        calendarioLimpeza: ''
+        calendarioLimpeza: '',
+        emails: [],
+        usuarios: []
     }
 
     constructor(){
         super()
         this.service = new UsuarioService()
+    }
+
+    componentDidMount(){
+        this.service.buscarUsuarios()
+            .then(response => {
+                this.setState({ usuarios: response.data })
+                console.log(response.data)
+            }).catch(error => {
+                console.error(error.response)
+            });
     }
 
     cadastrar = () => {
@@ -32,11 +49,10 @@ class CadastroUsuario extends React.Component {
 
         this.service.salvar(usuario)
             .then(response => {
-                console.log("Usuário cadastrado com sucesso.")
-                console.log(response.status)
+                mensagemSucesso('Usuário cadastrado com sucesso.')
                 this.props.history.push('/login')
             }).catch(error => {
-                console.log(error.response.data)
+                mensagemErro(error.response.data.msg)
             })
     }
 
@@ -45,7 +61,12 @@ class CadastroUsuario extends React.Component {
     }
 
 
-    render(){
+    render() {
+
+        const emailsEstudantes = this.service.buscarEmailsEstudantes()
+        
+        const diasDaSemana = this.service.buscarDiasDaSemana()
+
         return(
             <div className='container'>
                 <Card title='Cadastro de Usuário'>
@@ -61,13 +82,21 @@ class CadastroUsuario extends React.Component {
                                         onChange={e => this.setState({ nome: e.target.value })}/>
                                 </FormGroup>
 
-                                <FormGroup label='Email: *' htmlFor='inputEmail'>
+                                {/* <FormGroup label='Email: *' htmlFor='inputEmail'>
                                     <input type="email"
                                         id="inputEmail"
                                         name='email'
                                         className="form-control"
                                         placeholder="Digite o E-mail"
                                         onChange={e => this.setState({ email: e.target.value })}/>
+                                </FormGroup> */}
+
+                                <FormGroup label='Estudante: *' htmlFor='inputEstudante'>
+                                    <SelectMenu lista={emailsEstudantes}
+                                        className="form-control"
+                                        id="inputEstudante"
+                                        name='estudante'
+                                        onChange={e => this.setState({ email: e.target.value })} />
                                 </FormGroup>
 
                                 <FormGroup label='Senha: *' htmlFor='inputSenha'>
@@ -96,31 +125,22 @@ class CadastroUsuario extends React.Component {
                                         placeholder="O que você estuda?"
                                         onChange={e => this.setState({ curso: e.target.value })}/>
                                 </FormGroup>
-
-                             
-
-                                <FormGroup label='Dia de Cozinhar: *' htmlFor='inputCozinha'>
-                                    <select  className="form-control" id="inputCozinha" name='cozinha' onChange={e => this.setState({ calendarioCozinha: e.target.value })}>
-                                        <option value="Domingo">Domingo</option>
-                                        <option value="Segunda">Segunda-Feira</option>
-                                        <option value="Terca">Terça-Feira</option>
-                                        <option value="Quarta">Quarta-Feira</option>
-                                        <option value="Quinta">Quinta-Feira</option>
-                                        <option value="Sexta">Sexta-Feira</option>
-                                        <option value="Sábado">Sábado</option>
-                                    </select>
-                                </FormGroup>
                       
+                                <FormGroup label='Dia de Cozinhar: *' htmlFor='inputCozinha'>
+                                    <SelectMenu
+                                        lista={diasDaSemana}
+                                        className="form-control"
+                                        id="inputCozinha"
+                                        name='cozinha'
+                                        onChange={e => this.setState({ calendarioCozinha: e.target.value })}/>
+                                </FormGroup>
+
                                 <FormGroup label='Dia da Faxina: *' htmlFor='inputFaxina'>
-                                    <select  className="form-control" id="inputFaxina" name='faxina' onChange={e => this.setState({ calendarioLimpeza: e.target.value })}>
-                                        <option value="Domingo">Domingo</option>
-                                        <option value="Segunda">Segunda-Feira</option>
-                                        <option value="Terca">Terça-Feira</option>
-                                        <option value="Quarta">Quarta-Feira</option>
-                                        <option value="Quinta">Quinta-Feira</option>
-                                        <option value="Sexta">Sexta-Feira</option>
-                                        <option value="Sábado">Sábado</option>
-                                    </select>
+                                    <SelectMenu lista={diasDaSemana}
+                                        className="form-control"
+                                        id="inputFaxina"
+                                        name='faxina'
+                                        onChange={e => this.setState({ calendarioLimpeza: e.target.value })} />
                                 </FormGroup>
 
                                 <button onClick={this.cadastrar} type="button" className="btn btn-success">Salvar</button>
@@ -128,7 +148,16 @@ class CadastroUsuario extends React.Component {
                             </div>
                         </div>
                     </div>
+                    <br/>
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <div className="bs-component">
+                                <TabelaUsuario usuarios={ this.state.usuarios }/>
+                            </div>
+                        </div>
+                    </div>
                 </Card>
+                
             </div>
         )
     }

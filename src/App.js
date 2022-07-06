@@ -2,6 +2,9 @@ import React from 'react';
 import 'bootswatch/dist/flatly/bootstrap.css'
 import './custom.css';
 
+import 'toastr/build/toastr.min.js'
+import 'toastr/build/toastr.css'
+
 import Rotas from './rotas';
 import NavBar from './components/navbar';
 

@@ -2,6 +2,8 @@ import React from 'react'
 
 import UsuarioService from '../app/service/usuarioservice'
 
+import { mensagemSucesso } from '../components/toastr'
+
 class Home extends React.Component{
 
     state = {
@@ -14,9 +16,10 @@ class Home extends React.Component{
     }
 
     componentDidMount(){
-        this.service.buscarQuantidadeDeUsuarios()
+        this.service.buscarUsuarios()
             .then(response => {
                 this.setState({ quantidaDeEstudantes: response.data.length })
+                mensagemSucesso('Deu certo')
             }).catch(error => {
                 console.error(error.response)
             })

@@ -18,7 +18,7 @@ export default function NavBar(props) {
                     <ul className="navbar-nav">
                         <NavbarItem href='#/home' label='Home'/>
                         <NavbarItem href='#/cadastro-usuarios' label='Usuários'/>
-                        <NavbarItem href='#/lancamentos' label='Calendário'/>
+                        <NavbarItem href='#/consulta-tarefas' label='Tarefas'/>
                         <NavbarItem href='#/login' label='Login'/>
                     </ul>
                 </div>
