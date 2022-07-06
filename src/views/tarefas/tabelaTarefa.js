@@ -19,7 +19,7 @@ export default props => {
                     </button>
                     <button type="button"
                             className="btn btn-danger"
-                            onClick={e => props.deletarAction(tarefa.id)}>
+                            onClick={e => props.deletarAction(tarefa)}>
                             Deletar
                     </button>
                 </td>
@@ -34,6 +34,7 @@ export default props => {
                     <th scope="col">Tipo</th>
                     <th scope="col">Data</th>
                     <th scope="col">Usuário</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>

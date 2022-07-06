@@ -11,6 +11,8 @@ import TabelaTarefa from './tabelaTarefa';
 import TarefaService from '../../app/service/tarefaservice';
 import UsuarioService from '../../app/service/usuarioservice';
 
+import { mensagemSucesso, mensagemErro } from '../../components/toastr'
+
 class ConsultaTarefa extends React.Component {
 
     state = {
@@ -60,8 +62,18 @@ class ConsultaTarefa extends React.Component {
         console.log('editanto tarefa'+ id)
     }
 
-    deletar = (id) => {
-        console.log('excluindo tarefa'+ id)
+    deletar = (tarefa) => {
+        this.service
+            .deletar(tarefa.id)
+            .then(response => {
+                const tarefas = this.state.tarefas
+                const index = tarefas.indexOf(tarefa)
+                tarefas.splice(index, 1)
+                this.setState(tarefas)
+                mensagemSucesso("Tarefa excluída com sucesso")
+            }).catch(error => {
+                mensagemErro("Não foi possível excluir a tarefa")
+        })
     }
 
     render() {

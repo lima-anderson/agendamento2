@@ -13,6 +13,10 @@ export default class TarefaService extends ApiService {
         return this.get('/tarefas')
     }
 
+    deletar(id) {
+        return this.delete(`tarefas/${id}`)
+    }
+
     buscarTiposDeTarefas() {
         return [
             { label: 'Selecione...', value: '' },
