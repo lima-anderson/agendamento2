@@ -1,6 +1,8 @@
 import React from 'react';
 import Card from '../../components/card';
-import FormGroup from '../../components/formgroup';
+
+import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
 
 
 import { withRouter } from 'react-router-dom'
@@ -8,22 +10,25 @@ import { withRouter } from 'react-router-dom'
 import UsuarioService from '../../app/service/usuarioservice';
 
 import { mensagemSucesso, mensagemErro } from '../../components/toastr'
-import SelectMenu from '../../components/selectMenu'
 
-// import TabelaUsuario from './tabelaUsuario'
+import TabelaUsuario from './tabelaUsuario'
+import SelectMenu from '../../components/selectMenu';
+import FormGroup from '../../components/formgroup';
 
-class CadastroUsuario extends React.Component {
+class ConsultaUsuario extends React.Component {
 
     state = {
         name: '',
         email: '',
-        senha: '',
+        password: '',
         senhaRepeticao: '',
         curso: '',
         calendarioCozinha: '',
         calendarioLimpeza: '',
         emails: [],
-        usuarios: []
+        usuarios: [],
+        showConfirmDialog: false,
+        deletarUsuario: {}
     }
 
     constructor(){
@@ -31,55 +36,18 @@ class CadastroUsuario extends React.Component {
         this.service = new UsuarioService()
     }
 
-    componentDidMount() {
-        
-        // const params = this.props.match.params
-        // if (params.id) {
-        //     this.service.buscarPorId(params.id)
-        //         .then(response => {
-        //             console.log(response.data)
-        //             console.log(response.data.id)
-        //             this.setState({
-        //                 id: response.data.id,
-        //                 name: response.data.name,
-        //                 email: response.data.email,
-        //                 password: response.data.password,
-        //                 curso: response.data.curso,
-        //                 diaDeCozinhar: response.data.diaDeCozinhar,
-        //                 diaDeLimpar: response.data.diaDeLimpar
-        //             })
-        //         })
-        //         .catch(error => {
-        //             mensagemErro(error.response.data)
-        //         })
-        // }
-
-
-        
+    componentDidMount(){
+        this.service.buscarUsuarios()
+            .then(response => {
+                this.setState({ usuarios: response.data })
+                console.log(response.data)
+            }).catch(error => {
+                console.error(error.response)
+            });
     }
 
     cadastrar = () => {
         const usuario = {
-            name: this.state.name,
-            email: this.state.email,
-            password: this.state.senha,
-            
-        }
-        this.service.salvar(usuario)
-            .then(response => {
-                console.log(usuario)
-                mensagemSucesso('Usuário cadastrado com sucesso.')
-                this.props.history.push('/login')
-            }).catch(error => {
-                console.log(error.data)
-                console.log(error.response.data)
-                // mensagemErro(error.response.data.msg)
-            })
-    }
-
-    atualizar = () => {
-        const usuario = {    
-            id: this.state.id,
             name: this.state.name,
             email: this.state.email,
             password: this.state.password,
@@ -87,34 +55,81 @@ class CadastroUsuario extends React.Component {
             diaDeCozinhar: this.state.diaDeCozinhar,
             diaDeLimpar: this.state.diaDeLimpar
         }
-        
-        this.service.atualizar(usuario, this.state.id)
+
+        this.service.salvar(usuario)
             .then(response => {
-                console.log('meu post: '+usuario.id)
-                // console.log(response)
-                mensagemSucesso("Tarefa atualizada com sucesso")
+                console.log(response.data)
+                mensagemSucesso('Usuário cadastrado com sucesso.')
             }).catch(error => {
-                console.log(error)
-                // mensagemErro("Não foi possível atualizar a usuario")
+                console.log(error.response)
+                console.log(error.response)
+                mensagemErro(error.response.data.msg)
+                this.props.history.push(`/consulta-usuarios`)
+            })
+    }
+
+    // editar = (id) => {
+    //     this.props.history.push(`/cadastro-usuarios/${id}`)
+    //     console.log('editanto usuario' + id)
+        
+    // }
+
+    abrir = (id) => {
+        this.props.history.push(`/users/${id}`)
+        console.log('editanto usuario' + id)
+        
+    }
+
+    abrirConfirmacao = (usuario) => {
+        this.setState({
+            showConfirmDialog: true, deletarUsuario: usuario
         })
-        this.props.history.push('/consulta-usuarios')
+    }
+
+    cancelarDelecao = () => {
+        this.setState({
+            showConfirmDialog: false, deletarUsuario: {}
+        })
+    }
+
+    deletar = () => {
+        this.service
+            .deletar(this.state.deletarUsuario.id)
+            .then(response => {
+                const usuarios = this.state.usuarios
+                const index = usuarios.indexOf(this.state.deletarUsuario)
+                usuarios.splice(index, 1)
+                this.setState({ usuarios: usuarios, showConfirmDialog: false })
+                mensagemSucesso("Tarefa excluída com sucesso")
+            }).catch(error => {
+                mensagemErro("Não foi possível excluir a tarefa")
+        })
     }
 
     cancelar = () => {
+        this.props.history.push('/home')
+    }
+
+    irParaCadastro = () => {
         this.props.history.push('/consulta-usuarios')
     }
 
-
     render() {
 
-        // const emailsEstudantes = this.service.buscarEmailsEstudantes()
-        
         const diasDaSemana = this.service.buscarDiasDaSemana()
 
+        const confirmDialogFooter = (
+            <div>
+                <Button label="Não" icon="pi pi-times" onClick={this.cancelarDelecao} />
+                <Button label="Sim" icon="pi pi-check" onClick={this.deletar} />
+            </div>
+        );
+
         return(
+            
             <div className='container'>
-                <Card title='Cadastro de Usuário'>
-                    <div className="row">
+                <Card title='Usuários'>
+                <div className="row">
                         <div className="col-lg-12">
                             <div className="bs-component">
                                 <FormGroup label='Nome: *' htmlFor='inputNome'>
@@ -141,7 +156,7 @@ class CadastroUsuario extends React.Component {
                                         name='senha'
                                         className="form-control"
                                         placeholder="Senha"
-                                        onChange={e => this.setState({ senha: e.target.value })}/>
+                                        onChange={e => this.setState({ password: e.target.value })}/>
                                 </FormGroup>
 
                                 <FormGroup label='Repita a Senha: *' htmlFor='inputRepitaSenha'>
@@ -168,27 +183,52 @@ class CadastroUsuario extends React.Component {
                                         className="form-control"
                                         id="inputCozinha"
                                         name='cozinha'
-                                        onChange={e => this.setState({ calendarioCozinha: e.target.value })}/>
+                                        onChange={e => this.setState({ diaDeCozinhar: e.target.value })}/>
                                 </FormGroup>
-
+    
                                 <FormGroup label='Dia da Faxina: *' htmlFor='inputFaxina'>
                                     <SelectMenu lista={diasDaSemana}
                                         className="form-control"
                                         id="inputFaxina"
                                         name='faxina'
-                                        onChange={e => this.setState({ calendarioLimpeza: e.target.value })} />
+                                        onChange={e => this.setState({ diaDeLimpar: e.target.value })} />
                                 </FormGroup>
 
-                                {/* <button onClick={this.cadastrar} type="button" className="btn btn-success">Salvar</button> */}
-                                {/* <button onClick={this.cancelar} type="button" className="btn btn-danger">Voltar</button> */}
+                                <button onClick={this.cadastrar} type="button" className="btn btn-success">Salvar</button>
                             </div>
                         </div>
                     </div>
+                    <br/>
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <div className="bs-component">
+                                <TabelaUsuario
+                                    usuarios={this.state.usuarios}
+                                    deletarAction={this.abrirConfirmacao}
+                                    editarAction={this.abrir}/>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <Dialog header="Confirmação"
+                            visible={this.state.showConfirmDialog}
+                            style={{ width: '50vw' }}
+                            modal={true}
+                            footer={confirmDialogFooter}
+                            onHide={() => this.setState({showConfirmDialog: true})}>
+                            <p>Deseja mesmo excluir este usuário?</p>
+                        </Dialog>
+                    </div>
                 </Card>
-                
+                {/* <button
+                    onClick={this.irParaCadastro}
+                    ype="button"
+                    className="btn btn-success">
+                    Cadastrar Usuário
+                </button> */}
             </div>
         )
     }
 }
 
-export default withRouter(CadastroUsuario)
+export default withRouter(ConsultaUsuario)

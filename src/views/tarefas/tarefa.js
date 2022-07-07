@@ -1,33 +1,26 @@
 import React from 'react';
-
-import { withRouter } from 'react-router-dom'
-
 import Card from '../../components/card';
-import TabelaTarefa from './tabelaTarefa';
+import { withRouter } from 'react-router-dom'
 import TarefaService from '../../app/service/tarefaservice';
 import UsuarioService from '../../app/service/usuarioservice';
-
-import { mensagemSucesso, mensagemErro } from '../../components/toastr'
-
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 
 import SelectMenu from '../../components/selectMenu';
-
 import FormGroup from '../../components/formgroup'
+import moment from 'moment';
+import { mensagemSucesso, mensagemErro } from '../../components/toastr'
 
 
 
-
-
-class ConsultaTarefa extends React.Component {
+class Tarefa extends React.Component { 
 
     state = {
         tipo: '',
         usuario:'',
         usuarioEmail: '',
         emailsUsuarios: [],
-        tarefas: [],
+        tarefa: '',
         showConfirmDialog: false,
         deletarTarefa: {}
     }
@@ -39,25 +32,20 @@ class ConsultaTarefa extends React.Component {
     }
 
     componentDidMount() {
-        
         const params = this.props.match.params
         if (params.id) {
             this.service.buscarPorId(params.id)
                 .then(response => {
-                    console.log(response.data)
-                    console.log(response.data.id)
-                    this.setState({
-                        id: response.data.id,
-                        tipo: response.data.tipo,
-                        status: response.data.status,
-                        usuarioEmail: response.data.usuario.usuarioEmail,
-                    })
+                    let tarefa = response.data
+                    let tipo =  tarefa.tipo
+                    let usuario = response.data.usuario
+                    this.setState({tarefa: tarefa, usuario: usuario, })
                 })
                 .catch(error => {
-                    mensagemErro(error.response.data)
+                    console.log(error.response.data)
                 })
         }
-        
+
         this.usuarioService.buscarUsuarios()
         .then(response => {
             let listaEmails = []
@@ -67,43 +55,19 @@ class ConsultaTarefa extends React.Component {
             console.error(error.response)
         });
 
-        this.service.buscarTarefas()
-            .then(response => {
-                this.setState({ tarefas: response.data })
-            }).catch(error => {
-                console.error(error.response)
-            })
-
-        console.log('params: ' + params)
-        
-    }
-
-    cadastrar = () => {
-        const tarefa = {
-            tipo: this.state.tipo,
-            status: true,
-            usuarioEmail: this.state.usuarioEmail,
-        }
-        this.service.salvar(tarefa)
-            .then(response => {
-                mensagemSucesso("Tarefa criada com sucesso")
-            }).catch(error => {
-                console.log(error)
-                console.log(error.response)
-            })
     }
 
     atualizar = () => {
         const tarefa = {
-            id: this.state.id,
+            id: this.state.tarefa.id,
             tipo: this.state.tipo,
             status: true,
-            usuarioEmail: this.state.usuarioEmail,
+            usuarioEmail: this.state.usuario.email,
         }
         
-        this.service.atualizar(tarefa, this.state.id)
+        this.service.atualizar(tarefa)
             .then(response => {
-                console.log('meu post: '+tarefa.id)
+                console.log('meu post: '+tarefa)
                 // console.log(response)
                 mensagemSucesso("Tarefa atualizada com sucesso")
             }).catch(error => {
@@ -111,46 +75,11 @@ class ConsultaTarefa extends React.Component {
                 console.log(error)
                 mensagemErro("Não foi possível atualizar a tarefa - tá batendo aqui?")
         })
-        this.props.history.push('/consulta-tarefas')
     }
 
-    abrir = (id) => {
-        this.props.history.push(`/tarefas/${id}`)
-        console.log('editanto tarefa' + id)
-        
-    }
-
-    abrirConfirmacao = (tarefa) => {
-        this.setState({
-            showConfirmDialog: true, deletarTarefa: tarefa
-        })
-    }
-
-    cancelarDelecao = () => {
-        this.setState({
-            showConfirmDialog: false, deletarTarefa: {}
-        })
-    }
-
-    deletar = () => {
-        this.service
-            .deletar(this.state.deletarTarefa.id)
-            .then(response => {
-                const tarefas = this.state.tarefas
-                const index = tarefas.indexOf(this.state.deletarTarefa)
-                tarefas.splice(index, 1)
-                this.setState({ tarefas: tarefas, showConfirmDialog: false })
-                mensagemSucesso("Tarefa excluída com sucesso")
-            }).catch(error => {
-                mensagemErro("Não foi possível excluir a tarefa")
-        })
-    }
-
-    voltar = () => {
-        this.props.history.push('/home')
-    }
 
     render() {
+
         const lista = this.service.buscarTiposDeTarefas()
 
         let listaDeEmail = [{ label: 'Selecione...', value: '' }]
@@ -164,10 +93,10 @@ class ConsultaTarefa extends React.Component {
                 <Button label="Sim" icon="pi pi-check" onClick={this.deletar} />
             </div>
         );
-
-        return(
+    
+        return (
             <div className='container'>
-                <Card title='Tarefas'>
+                <Card title='Tarefa'>
                 <div className="row">
                         <div className="col-lg-4">
                             <div className="bs-component">
@@ -188,22 +117,11 @@ class ConsultaTarefa extends React.Component {
                                         onChange={e => this.setState({ usuarioEmail: e.target.value })} />
                                 </FormGroup>
 
-                                <button onClick={this.voltar} type="button" className="btn btn-danger">Voltar</button>
-                                <button onClick={this.cadastrar} type="button" className="btn btn-success">Salvar</button>
+                                <button onClick={this.atualizar} type="button" className="btn btn-success">Salvar</button>
                             </div>
                         </div>
                     </div>
-                    <br/>
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <div className="bs-component">
-                                <TabelaTarefa
-                                    tarefas={this.state.tarefas}
-                                    deletarAction={this.abrirConfirmacao}
-                                    editarAction={this.abrir} />
-                            </div>
-                        </div>
-                    </div>
+                
                     <div>
                         <Dialog header="Confirmação"
                             visible={this.state.showConfirmDialog}
@@ -214,10 +132,45 @@ class ConsultaTarefa extends React.Component {
                             <p>Deseja mesmo excluir a tarefa?</p>
                         </Dialog>
                     </div>
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <div className="bs-component">
+                                <table className="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Tipo</th>
+                                            <th scope="col">Data</th>
+                                            <th scope="col">Usuário</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr key={this.state.tarefa.id}>
+                                            <td>{ this.state.tarefa.tipo }</td>
+                                            <td>{moment(this.state.tarefa.data).format('MM/DD/YYYY HH:mm')}</td>
+                                            <td>{this.state.usuario.name}</td>
+                                            <td>
+                                                <button type="button"
+                                                        className="btn btn-primary" 
+                                                        onClick={e => this.editarAction(this.state.tarefa.id)}>
+                                                        Editar
+                                                </button>
+                                                <button type="button"
+                                                        className="btn btn-danger"
+                                                        onClick={e => this.deletarAction(this.state.tarefa)}>
+                                                        Deletar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </Card>
             </div>
+            
         )
     }
 }
-
-export default withRouter(ConsultaTarefa)
+export default withRouter(Tarefa)

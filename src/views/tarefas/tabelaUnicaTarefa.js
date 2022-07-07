@@ -1,24 +1,25 @@
+import moment from 'moment';
 import React from 'react';
+
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default props => {
 
-    const rows = props.usuarios.map(usuario => {
+    const rows = {
         return (
-            <tr key={usuario.id}>
-                <td>{ usuario.name }</td>
-                <td>{ usuario.email }</td>
-                <td>{ usuario.password }</td>
-                <td>{usuario.curso}</td>
+            <tr key={prop.tarefa.id}>
+                <td>{ prop.tarefa.tipo }</td>
+                <td>{moment(prop.tarefa.data).format('MM/DD/YYYY HH:mm')}</td>
+                <td>{prop.tarefa.usuario.name}</td>
                 <td>
                     <button type="button"
                             className="btn btn-primary" 
-                            onClick={e => props.editarAction(usuario.id)}>
-                            Abrir
+                            onClick={e => props.editarAction(prop.tarefa.id)}>
+                            Editar
                     </button>
                     <button type="button"
                             className="btn btn-danger"
-                            onClick={e => props.deletarAction(usuario)}>
+                            onClick={e => props.deletarAction(prop.tarefa)}>
                             Deletar
                     </button>
                 </td>
@@ -30,10 +31,9 @@ export default props => {
         <table className="table table-hover">
             <thead>
                 <tr>
-                    <th scope="col">Nome</th>
-                    <th scope="col">E-Mail</th>
-                    <th scope="col">Senha</th>
-                    <th scope="col">Curso</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Data</th>
+                    <th scope="col">Usuário</th>
                     <th>Ações</th>
                 </tr>
             </thead>

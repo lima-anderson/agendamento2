@@ -30,7 +30,7 @@ export default class TarefaService extends ApiService {
         return [
             { label: 'Selecione...', value: '' },
             { label: 'FAXINA', value: 1 },
-            { label: 'COMIDA', value: '2' }
+            { label: 'COMIDA', value: 2 }
         ]
     }
 }

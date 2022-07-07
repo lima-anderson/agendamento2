@@ -6,6 +6,7 @@ import React from 'react';
 export default props => {
 
     const rows = props.tarefas.map(tarefa => {
+        
         return (
             <tr key={tarefa.id}>
                 <td>{ tarefa.tipo }</td>
@@ -15,7 +16,7 @@ export default props => {
                     <button type="button"
                             className="btn btn-primary" 
                             onClick={e => props.editarAction(tarefa.id)}>
-                            Editar
+                            Abrir
                     </button>
                     <button type="button"
                             className="btn btn-danger"

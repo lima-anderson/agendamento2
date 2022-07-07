@@ -17,7 +17,6 @@ export default function NavBar(props) {
                 <div className="collapse navbar-collapse" id="navbarResponsive">
                     <ul className="navbar-nav">
                         <NavbarItem href='#/home' label='Home'/>
-                        <NavbarItem href='#/cadastro-usuarios' label='Cadastro de Usuários'/>
                         <NavbarItem href='#/consulta-usuarios' label='Usuários'/>
                         <NavbarItem href='#/consulta-tarefas' label='Tarefas'/>
                         <NavbarItem href='#/login' label='Login'/>
