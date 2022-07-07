@@ -1,15 +1,16 @@
 import React from 'react';
-import Card from '../components/card';
-import FormGroup from '../components/formgroup';
+import Card from '../../components/card';
+import FormGroup from '../../components/formgroup';
+
 
 import { withRouter } from 'react-router-dom'
 
-import UsuarioService from '../app/service/usuarioservice';
+import UsuarioService from '../../app/service/usuarioservice';
 
-import { mensagemSucesso, mensagemErro } from '../components/toastr'
-import SelectMenu from '../components/selectMenu'
+import { mensagemSucesso, mensagemErro } from '../../components/toastr'
+import SelectMenu from '../../components/selectMenu'
 
-import TabelaUsuario from './tabelaUsuario'
+// import TabelaUsuario from './tabelaUsuario'
 
 class CadastroUsuario extends React.Component {
 
@@ -30,23 +31,40 @@ class CadastroUsuario extends React.Component {
         this.service = new UsuarioService()
     }
 
-    componentDidMount(){
-        this.service.buscarUsuarios()
-            .then(response => {
-                this.setState({ usuarios: response.data })
-                console.log(response.data)
-            }).catch(error => {
-                console.error(error.response)
-            });
+    componentDidMount() {
+        
+        const params = this.props.match.params
+        if (params.id) {
+            this.service.buscarPorId(params.id)
+                .then(response => {
+                    console.log(response.data)
+                    console.log(response.data.id)
+                    this.setState({
+                        id: response.data.id,
+                        name: response.data.name,
+                        email: response.data.email,
+                        password: response.data.password,
+                        curso: response.data.curso,
+                        diaDeCozinhar: response.data.diaDeCozinhar,
+                        diaDeLimpar: response.data.diaDeLimpar
+                    })
+                })
+                .catch(error => {
+                    mensagemErro(error.response.data)
+                })
+        }
+
+
+        
     }
 
     cadastrar = () => {
         const usuario = {
-            name: this.state.nome,
+            name: this.state.name,
             email: this.state.email,
-            password: this.state.senha
+            password: this.state.senha,
+            
         }
-
         this.service.salvar(usuario)
             .then(response => {
                 mensagemSucesso('Usuário cadastrado com sucesso.')
@@ -56,14 +74,37 @@ class CadastroUsuario extends React.Component {
             })
     }
 
+    atualizar = () => {
+        const usuario = {    
+            id: this.state.id,
+            name: this.state.name,
+            email: this.state.email,
+            password: this.state.password,
+            curso: this.state.curso,
+            diaDeCozinhar: this.state.diaDeCozinhar,
+            diaDeLimpar: this.state.diaDeLimpar
+        }
+        
+        this.service.atualizar(usuario, this.state.id)
+            .then(response => {
+                console.log('meu post: '+usuario.id)
+                // console.log(response)
+                mensagemSucesso("Tarefa atualizada com sucesso")
+            }).catch(error => {
+                console.log(error)
+                // mensagemErro("Não foi possível atualizar a usuario")
+        })
+        this.props.history.push('/consulta-usuarios')
+    }
+
     cancelar = () => {
-        this.props.history.push('/login')
+        this.props.history.push('/consulta-usuarios')
     }
 
 
     render() {
 
-        const emailsEstudantes = this.service.buscarEmailsEstudantes()
+        // const emailsEstudantes = this.service.buscarEmailsEstudantes()
         
         const diasDaSemana = this.service.buscarDiasDaSemana()
 
@@ -82,21 +123,13 @@ class CadastroUsuario extends React.Component {
                                         onChange={e => this.setState({ nome: e.target.value })}/>
                                 </FormGroup>
 
-                                {/* <FormGroup label='Email: *' htmlFor='inputEmail'>
+                                 <FormGroup label='Email: *' htmlFor='inputEmail'>
                                     <input type="email"
                                         id="inputEmail"
                                         name='email'
                                         className="form-control"
                                         placeholder="Digite o E-mail"
                                         onChange={e => this.setState({ email: e.target.value })}/>
-                                </FormGroup> */}
-
-                                <FormGroup label='Estudante: *' htmlFor='inputEstudante'>
-                                    <SelectMenu lista={emailsEstudantes}
-                                        className="form-control"
-                                        id="inputEstudante"
-                                        name='estudante'
-                                        onChange={e => this.setState({ email: e.target.value })} />
                                 </FormGroup>
 
                                 <FormGroup label='Senha: *' htmlFor='inputSenha'>
@@ -145,14 +178,6 @@ class CadastroUsuario extends React.Component {
 
                                 <button onClick={this.cadastrar} type="button" className="btn btn-success">Salvar</button>
                                 <button onClick={this.cancelar} type="button" className="btn btn-danger">Voltar</button>
-                            </div>
-                        </div>
-                    </div>
-                    <br/>
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <div className="bs-component">
-                                <TabelaUsuario usuarios={ this.state.usuarios }/>
                             </div>
                         </div>
                     </div>

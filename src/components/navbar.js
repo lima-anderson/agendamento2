@@ -6,7 +6,7 @@ export default function NavBar(props) {
         <div className="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
             <div className="container">
                 
-                <a href="home.html" className="navbar-brand">Minhas Agenda</a>
+                <a href='#/home' className="navbar-brand">Minhas Agenda</a>
                 
                 <button className="navbar-toggler" type="button" data-toggle="collapse"
                     data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
@@ -17,7 +17,8 @@ export default function NavBar(props) {
                 <div className="collapse navbar-collapse" id="navbarResponsive">
                     <ul className="navbar-nav">
                         <NavbarItem href='#/home' label='Home'/>
-                        <NavbarItem href='#/cadastro-usuarios' label='Usuários'/>
+                        <NavbarItem href='#/cadastro-usuarios' label='Cadastro de Usuários'/>
+                        <NavbarItem href='#/consulta-usuarios' label='Usuários'/>
                         <NavbarItem href='#/consulta-tarefas' label='Tarefas'/>
                         <NavbarItem href='#/login' label='Login'/>
                     </ul>

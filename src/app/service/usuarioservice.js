@@ -12,15 +12,21 @@ export default class UsuarioService extends ApiService {
         return this.post('/users', usuario)
     }
 
-    salvar(usuario){
-        return this.put('/users', usuario)
+    atualizar(usuario){
+        return this.put(`users/${usuario.id}`, usuario)
     }
 
     buscarUsuarios(){
         return this.get('/users')
     }
 
+    buscarPorId(id) {
+        return this.get(`users/${id}`)
+    }
 
+    deletar(id) {
+        return this.delete(`users/${id}`)
+    }
 
     buscarDiasDaSemana() {
         return [

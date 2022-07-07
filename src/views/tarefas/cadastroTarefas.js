@@ -54,9 +54,6 @@ class CadastroTarefa extends React.Component {
         }).catch(error => {
             console.error(error.response)
         });
-
-    
-        
     }
 
     cadastrar = () => {
@@ -69,6 +66,8 @@ class CadastroTarefa extends React.Component {
             .then(response => {
                 mensagemSucesso("Tarefa criada com sucesso")
             }).catch(error => {
+                console.log(error)
+                console.log(error.response)
                 mensagemErro("Não foi possível criar a tarefa")
             })
             this.props.history.push('/consulta-tarefas')
@@ -82,7 +81,7 @@ class CadastroTarefa extends React.Component {
             usuarioEmail: this.state.usuarioEmail,
         }
         
-        this.service.atualizar(tarefa)
+        this.service.atualizar(tarefa, this.state.id)
             .then(response => {
                 console.log('meu post: '+tarefa.id)
                 // console.log(response)

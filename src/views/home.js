@@ -42,7 +42,7 @@ class Home extends React.Component{
                         <a className="btn btn-danger btn-lg" 
                             href="#/cadastro-tarefas/" 
                             role="button"><i className="pi pi-money-bill"></i>  
-                            Calendário de Atividades
+                            Cadastrar Atividades
                         </a>
                     </p>
                 </div>
