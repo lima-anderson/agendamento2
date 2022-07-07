@@ -1,11 +1,10 @@
-import { list } from 'postcss'
 import ApiService from '../apiservice'
 
 
 export default class UsuarioService extends ApiService {
-    constructor() {
-        super()
-    }
+    // constructor() {
+    //     super()
+    // }
 
 
 

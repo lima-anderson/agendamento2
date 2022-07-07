@@ -1,12 +1,12 @@
 import ApiService from '../apiservice'
 
 export default class TarefaService extends ApiService {
-    constructor() {
-        super()
-    }
+    // constructor() {
+    //     super()
+    // }
 
     salvar(tarefa){
-        return this.post('/tarefas', tarefa)
+        return this.post('tarefas', tarefa)
     }
 
     buscarTarefas(){
@@ -21,7 +21,7 @@ export default class TarefaService extends ApiService {
         return [
             { label: 'Selecione...', value: '' },
             { label: 'FAXINA', value: 1 },
-            { label: 'LIMPEZA', value: '2' }
+            { label: 'COMIDA', value: '2' }
         ]
     }
 }

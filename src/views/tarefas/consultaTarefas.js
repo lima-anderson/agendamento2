@@ -21,7 +21,8 @@ class ConsultaTarefa extends React.Component {
 
     state = {
         tipo: '',
-        usuario: '',
+        usuario:'',
+        usuarioEmail: '',
         tarefas: [],
         emailsUsuarios: [],
         showConfirmDialog: false,
@@ -58,11 +59,37 @@ class ConsultaTarefa extends React.Component {
         const tarefa = {
             tipo: this.state.tipo,
             status: true,
-            usuario: this.state.usuario,
+            usuarioEmail: this.state.usuarioEmail,
         }
-        console.log(this.state)
+        console.log(tarefa)
         this.service.salvar(tarefa)
+            .then(response => {
+                console.log(response)
+                mensagemSucesso("Tarefa criada com sucesso")
+            }).catch(error => {
+                console.log(tarefa)
+                console.log(error)
+                mensagemErro("Não foi possível excluir a tarefa")
+        })
     }
+
+    // cadastrar = () => {
+    //     const tarefa = {
+    //         tipo: this.state.tipo,
+    //         status: true,
+    //         usuario: this.state.usuario
+    //     }
+    //     console.log(tarefa)
+    //     this.service.salvar(tarefa)
+    //         .then(response => {
+    //             console.log(response)
+    //             mensagemSucesso("Tarefa criada com sucesso")
+    //         }).catch(error => {
+    //             console.log(tarefa)
+    //             console.log(error)
+    //             mensagemErro("Não foi possível excluir a tarefa")
+    //     })
+    // }
 
     editar = (id) => {
         console.log('editanto tarefa'+ id)
@@ -99,7 +126,7 @@ class ConsultaTarefa extends React.Component {
         let listaDeEmail = [{ label: 'Selecione...', value: '' }]
             
         this.state.emailsUsuarios.map((valor, index) => {
-            listaDeEmail.push({ label: valor, value: index })
+            listaDeEmail.push({ label: valor, value: valor })
         })
 
         const confirmDialogFooter = (
@@ -124,21 +151,12 @@ class ConsultaTarefa extends React.Component {
                                         onChange={e => this.setState({ tipo: e.target.value })} />
                                 </FormGroup>
 
-                                {/* <FormGroup label='Usuário: *' htmlFor='inputUsuario'>
-                                    <input type="number"
-                                        id="inputUsuario"
-                                        name='usuario'
-                                        className="form-control"
-                                        placeholder="Digite o Id do usuário"
-                                        onChange={e => this.setState({ usuario: e.target.value })}/>
-                                </FormGroup> */}
-
                                 <FormGroup label='Estudante: *' htmlFor='inputUsuario'>
                                     <SelectMenu lista={listaDeEmail}
                                         className="form-control"
                                         id="inputUsuario"
                                         name='estudante'
-                                        onChange={e => this.setState({ email: e.target.value })} />
+                                        onChange={e => this.setState({ usuarioEmail: e.target.value })} />
                                 </FormGroup>
 
                                 <button onClick={this.cadastrar} type="button" className="btn btn-success">Salvar</button>
