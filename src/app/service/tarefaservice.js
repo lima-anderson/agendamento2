@@ -9,8 +9,17 @@ export default class TarefaService extends ApiService {
         return this.post('tarefas', tarefa)
     }
 
+    atualizar(tarefa){
+        return this.put(`tarefas/${tarefa.id}`, tarefa)
+    }
+
+
     buscarTarefas(){
         return this.get('/tarefas')
+    }
+
+    buscarPorId(id) {
+        return this.get(`tarefas/${id}`)
     }
 
     deletar(id) {

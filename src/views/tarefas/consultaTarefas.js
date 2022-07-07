@@ -1,15 +1,10 @@
 import React from 'react';
-import FormGroup from '../../components/formgroup'
 
 import { withRouter } from 'react-router-dom'
 
-import SelectMenu from '../../components/selectMenu'
 import Card from '../../components/card';
-
 import TabelaTarefa from './tabelaTarefa';
-
 import TarefaService from '../../app/service/tarefaservice';
-import UsuarioService from '../../app/service/usuarioservice';
 
 import { mensagemSucesso, mensagemErro } from '../../components/toastr'
 
@@ -20,11 +15,11 @@ import { Button } from 'primereact/button';
 class ConsultaTarefa extends React.Component {
 
     state = {
-        tipo: '',
-        usuario:'',
-        usuarioEmail: '',
+        // tipo: '',
+        // usuario:'',
+        // usuarioEmail: '',
+        // emailsUsuarios: [],
         tarefas: [],
-        emailsUsuarios: [],
         showConfirmDialog: false,
         deletarTarefa: {}
     }
@@ -32,7 +27,7 @@ class ConsultaTarefa extends React.Component {
     constructor(){
         super()
         this.service = new TarefaService()
-        this.usuarioService = new UsuarioService()
+        // this.usuarioService = new UsuarioService()
     }
 
     componentDidMount(){
@@ -42,57 +37,16 @@ class ConsultaTarefa extends React.Component {
             }).catch(error => {
                 console.error(error.response)
             })
-        
-            this.usuarioService.buscarUsuarios()
-            .then(response => {
-                let listaEmails = []
-                response.data.map(usuario => listaEmails.push(usuario.email))
-                this.setState({ emailsUsuarios: listaEmails })
 
-            }).catch(error => {
-                console.error(error.response)
-            });
+        const params = this.props.match.params
+        console.log('params: ' + params)
         
     }
-
-    cadastrar = () => {
-        const tarefa = {
-            tipo: this.state.tipo,
-            status: true,
-            usuarioEmail: this.state.usuarioEmail,
-        }
-        console.log(tarefa)
-        this.service.salvar(tarefa)
-            .then(response => {
-                console.log(response)
-                mensagemSucesso("Tarefa criada com sucesso")
-            }).catch(error => {
-                console.log(tarefa)
-                console.log(error)
-                mensagemErro("Não foi possível excluir a tarefa")
-        })
-    }
-
-    // cadastrar = () => {
-    //     const tarefa = {
-    //         tipo: this.state.tipo,
-    //         status: true,
-    //         usuario: this.state.usuario
-    //     }
-    //     console.log(tarefa)
-    //     this.service.salvar(tarefa)
-    //         .then(response => {
-    //             console.log(response)
-    //             mensagemSucesso("Tarefa criada com sucesso")
-    //         }).catch(error => {
-    //             console.log(tarefa)
-    //             console.log(error)
-    //             mensagemErro("Não foi possível excluir a tarefa")
-    //     })
-    // }
 
     editar = (id) => {
-        console.log('editanto tarefa'+ id)
+        this.props.history.push(`/cadastro-tarefas/${id}`)
+        console.log('editanto tarefa' + id)
+        
     }
 
     abrirConfirmacao = (tarefa) => {
@@ -121,50 +75,22 @@ class ConsultaTarefa extends React.Component {
         })
     }
 
+    voltar = () => {
+        this.props.history.push('/home')
+    }
+
     render() {
-        const lista = this.service.buscarTiposDeTarefas()
-        let listaDeEmail = [{ label: 'Selecione...', value: '' }]
-            
-        this.state.emailsUsuarios.map((valor, index) => {
-            listaDeEmail.push({ label: valor, value: valor })
-        })
 
         const confirmDialogFooter = (
             <div>
-                <Button label="Sim" icon="pi pi-check" onClick={this.deletar} />
                 <Button label="Não" icon="pi pi-times" onClick={this.cancelarDelecao} />
+                <Button label="Sim" icon="pi pi-check" onClick={this.deletar} />
             </div>
         );
 
         return(
             <div className='container'>
-                <Card title='Criar Tarefa'>
-                    <div className="row">
-                        <div className="col-lg-4">
-                            <div className="bs-component">
-
-                                <FormGroup label='Atividade: *' htmlFor='inputTarefa'>
-                                    <SelectMenu lista={lista}
-                                        className="form-control"
-                                        id="inputTarefa"
-                                        name='tarefa'
-                                        onChange={e => this.setState({ tipo: e.target.value })} />
-                                </FormGroup>
-
-                                <FormGroup label='Estudante: *' htmlFor='inputUsuario'>
-                                    <SelectMenu lista={listaDeEmail}
-                                        className="form-control"
-                                        id="inputUsuario"
-                                        name='estudante'
-                                        onChange={e => this.setState({ usuarioEmail: e.target.value })} />
-                                </FormGroup>
-
-                                <button onClick={this.cadastrar} type="button" className="btn btn-success">Salvar</button>
-                                <button onClick={this.cancelar} type="button" className="btn btn-danger">Voltar</button>
-                            </div>
-                        </div>
-                    </div>
-                    <br/>
+                <Card title='Tarefas'>
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="bs-component">

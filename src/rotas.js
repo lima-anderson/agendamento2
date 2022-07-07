@@ -5,6 +5,7 @@ import Login from './views/login';
 import CadastroUsuario from './views/cadastroUsuario';
 import Home from './views/home';
 import consultaTarefas from './views/tarefas/consultaTarefas';
+import cadastroTarefas from './views/tarefas/cadastroTarefas';
 
 export default function Rotas(){
     return(
@@ -14,6 +15,7 @@ export default function Rotas(){
                 <Route path='/home' component={Home}/>
                 <Route path='/cadastro-usuarios' component={CadastroUsuario} />
                 <Route path='/consulta-tarefas' component={consultaTarefas} />
+                <Route path='/cadastro-tarefas/:id' component={cadastroTarefas} />
             </Switch>
         </HashRouter>
     )

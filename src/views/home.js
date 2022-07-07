@@ -19,7 +19,6 @@ class Home extends React.Component{
         this.service.buscarUsuarios()
             .then(response => {
                 this.setState({ quantidaDeEstudantes: response.data.length })
-                mensagemSucesso('Deu certo')
             }).catch(error => {
                 console.error(error.response)
             })
@@ -41,7 +40,7 @@ class Home extends React.Component{
                             Cadastrar Usuário
                         </a>
                         <a className="btn btn-danger btn-lg" 
-                            href="/cadastro-lancamentos" 
+                            href="#/cadastro-tarefas/" 
                             role="button"><i className="pi pi-money-bill"></i>  
                             Calendário de Atividades
                         </a>

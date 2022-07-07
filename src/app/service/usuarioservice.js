@@ -12,6 +12,10 @@ export default class UsuarioService extends ApiService {
         return this.post('/users', usuario)
     }
 
+    salvar(usuario){
+        return this.put('/users', usuario)
+    }
+
     buscarUsuarios(){
         return this.get('/users')
     }
